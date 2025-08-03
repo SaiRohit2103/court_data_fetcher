@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Court Data Fetcher</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .container { background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        label { display: block; margin-top: 15px; }
+        input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        button { background-color: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        img.captcha-img { margin-top: 10px; border: 1px solid #ccc; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Court Cases</h1>
+        <form id="searchForm">
+            <label for="caseType">Case Type:</label>
+            <select id="caseType" name="caseType">
+                <option value="WP">Writ Petition (WP)</option>
+                <option value="CRL">Criminal (CRL)</option>
+                <option value="CS">Civil Suit (CS)</option>
+            </select>
+
+            <label for="caseNumber">Case Number:</label>
+            <input type="text" id="caseNumber" name="caseNumber" placeholder="e.g., 123/2023">
+
+            <label for="filingYear">Filing Year:</label>
+            <input type="text" id="filingYear" name="filingYear" placeholder="e.g., 2023">
+
+            <label for="courtType">Court:</label>
+            <select id="courtType" name="courtType">
+                <option value="delhi-hc">Delhi High Court</option>
+                <option value="district-courts">District Courts</option>
+            </select>
+
+            <label>CAPTCHA:</label>
+            <img src="/captcha" alt="CAPTCHA" class="captcha-img" id="captchaImage">
+
+            <label for="captcha">Enter CAPTCHA:</label>
+            <input type="text" id="captcha" name="captcha">
+
+            <button type="submit">Search Case</button>
+        </form>
+
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = {
+                caseType: document.getElementById('caseType').value,
+                caseNumber: document.getElementById('caseNumber').value,
+                filingYear: document.getElementById('filingYear').value,
+                courtType: document.getElementById('courtType').value,
+                captcha: document.getElementById('captcha').value
+            };
+
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('result').innerHTML = `<pre>${JSON.stringify(data.data, null, 2)}</pre>`;
+                } else {
+                    alert(data.error || 'Something went wrong');
+                }
+            } catch (err) {
+                alert('Request failed');
+            }
+        });
+    </script>
+</body>
+</html>
