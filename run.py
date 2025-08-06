@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-Simple run script for Delhi High Court Data Fetcher
-This script makes it easier to start the application with proper setup.
-"""
-
 import os
 import sys
 import subprocess
